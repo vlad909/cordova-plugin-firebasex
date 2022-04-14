@@ -131,6 +131,7 @@ public class FirebasePluginMessagingService extends FirebaseMessagingService {
             String priority = null;
             String image = null;
             String imageType = null;
+            String customType = null;
             boolean foregroundNotification = false;
 
             Map<String, String> data = remoteMessage.getData();
@@ -176,6 +177,7 @@ public class FirebasePluginMessagingService extends FirebaseMessagingService {
                 if(data.containsKey("notification_android_priority")) priority = data.get("notification_android_priority");
                 if(data.containsKey("notification_android_image")) image = data.get("notification_android_image");
                 if(data.containsKey("notification_android_image_type")) imageType = data.get("notification_android_image_type");
+                if(data.containsKey("notification_custom_type")) customType = data.get("notification_custom_type");
             }
 
             if (TextUtils.isEmpty(id)) {
@@ -198,18 +200,19 @@ public class FirebasePluginMessagingService extends FirebaseMessagingService {
             Log.d(TAG, "Priority: " + priority);
             Log.d(TAG, "Image: " + image);
             Log.d(TAG, "image Type: " + imageType);
+            Log.d(TAG, "custom Type: " + customType);
 
 
             if (!TextUtils.isEmpty(body) || !TextUtils.isEmpty(title) || (data != null && !data.isEmpty())) {
                 boolean showNotification = (FirebasePlugin.inBackground() || !FirebasePlugin.hasNotificationsCallback() || foregroundNotification) && (!TextUtils.isEmpty(body) || !TextUtils.isEmpty(title));
-                sendMessage(remoteMessage, data, messageType, id, title, body, bodyHtml, showNotification, sound, vibrate, light, color, icon, channelId, priority, visibility, image, imageType);
+                sendMessage(remoteMessage, data, messageType, id, title, body, bodyHtml, showNotification, sound, vibrate, light, color, icon, channelId, priority, visibility, image, imageType, customType);
             }
         }catch (Exception e){
             FirebasePlugin.handleExceptionWithoutContext(e);
         }
     }
 
-    private void sendMessage(RemoteMessage remoteMessage, Map<String, String> data, String messageType, String id, String title, String body, String bodyHtml, boolean showNotification, String sound, String vibrate, String light, String color, String icon, String channelId, String priority, String visibility, String image, String imageType) {
+    private void sendMessage(RemoteMessage remoteMessage, Map<String, String> data, String messageType, String id, String title, String body, String bodyHtml, boolean showNotification, String sound, String vibrate, String light, String color, String icon, String channelId, String priority, String visibility, String image, String imageType, String customType) {
         Log.d(TAG, "sendMessage(): messageType="+messageType+"; showNotification="+showNotification+"; id="+id+"; title="+title+"; body="+body+"; sound="+sound+"; vibrate="+vibrate+"; light="+light+"; color="+color+"; icon="+icon+"; channel="+channelId+"; data="+data.toString());
         Bundle bundle = new Bundle();
         for (String key : data.keySet()) {
@@ -256,6 +259,11 @@ public class FirebasePluginMessagingService extends FirebaseMessagingService {
                     .setContentTitle(title)
                     .setAutoCancel(true)
                     .setContentIntent(pendingIntent);
+            if (customType == 'call') {
+                notificationBuilder
+                    .setCategory(NotificationCompat.CATEGORY_CALL)
+                    .setFullScreenIntent(pendingIntent,true)
+            }
 
             if(bodyHtml != null) {
                 notificationBuilder
