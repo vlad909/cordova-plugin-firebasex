@@ -10,7 +10,7 @@
     "url": "git+https://github.com/vlad909/cordova-plugin-firebasex.git"
   },
   "cordova": {
-    "id": "cordova-plugin-firebase",
+    "id": "@itadori/cordova-plugin-firebase",
     "platforms": [
       "android",
       "ios"
