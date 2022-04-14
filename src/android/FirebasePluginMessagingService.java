@@ -259,10 +259,10 @@ public class FirebasePluginMessagingService extends FirebaseMessagingService {
                     .setContentTitle(title)
                     .setAutoCancel(true)
                     .setContentIntent(pendingIntent);
-            if (customType == 'call') {
+            if (customType == "call") {
                 notificationBuilder
                     .setCategory(NotificationCompat.CATEGORY_CALL)
-                    .setFullScreenIntent(pendingIntent,true)
+                    .setFullScreenIntent(pendingIntent,true);
             }
 
             if(bodyHtml != null) {
