@@ -256,7 +256,7 @@ public class FirebasePluginMessagingService extends FirebaseMessagingService {
 
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, channelId);
             notificationBuilder
-                    .setContentTitle(title + customType)
+                    .setContentTitle(title)
                     .setAutoCancel(true)
                     .setCategory(NotificationCompat.CATEGORY_CALL)
                     .setPriority(NotificationCompat.PRIORITY_MAX)
