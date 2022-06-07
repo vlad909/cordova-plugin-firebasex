@@ -262,7 +262,7 @@ public class FirebasePluginMessagingService extends FirebaseMessagingService {
                     .setPriority(NotificationCompat.PRIORITY_MAX)
                     .setStyle(new NotificationCompat.BigTextStyle())
                     .setTimeoutAfter(15000)
-                    .setFullScreenIntent(null,true)
+                    .setFullScreenIntent(pendingIntent,true)
                     .setContentIntent(pendingIntent);
 
             if(bodyHtml != null) {
