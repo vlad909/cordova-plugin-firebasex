@@ -263,10 +263,10 @@ public class FirebasePluginMessagingService extends FirebaseMessagingService {
                     .setFullScreenIntent(pendingIntent,true)
                     .setContentIntent(pendingIntent);
             String cType = "call";
-            if (customType.equals(cType)) {
+            if (customType != null && customType.equals(cType)) {
                 notificationBuilder
                     .setAutoCancel(true)
-                    .setTimeoutAfter(3000);
+                    .setTimeoutAfter(30000);
             }
             if(bodyHtml != null) {
                 notificationBuilder
