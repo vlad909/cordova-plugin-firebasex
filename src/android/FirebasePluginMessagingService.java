@@ -257,6 +257,7 @@ public class FirebasePluginMessagingService extends FirebaseMessagingService {
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, channelId);
             notificationBuilder
                     .setContentTitle(title)
+                    .setAutoCancel(true)
                     .setContentIntent(pendingIntent);
             String cType = "call";
             if (customType != null && customType.equals(cType)) {
@@ -265,7 +266,6 @@ public class FirebasePluginMessagingService extends FirebaseMessagingService {
                     .setFullScreenIntent(pendingIntent,true)
                     .setCategory(NotificationCompat.CATEGORY_CALL)
                     .setPriority(NotificationCompat.PRIORITY_MAX)
-                    .setAutoCancel(true)
                     .setTimeoutAfter(30000);
             }
             if(bodyHtml != null) {
