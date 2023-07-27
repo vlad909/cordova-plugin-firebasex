@@ -118,7 +118,11 @@ public class FirebasePluginMessagingService extends FirebaseMessagingService {
             // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
             String messageType;
             String title = null;
+            String titleLocKey = null;
+            String[] titleLocArgs = null;
             String body = null;
+            String bodyLocKey = null;
+            String[] bodyLocArgs = null;
             String bodyHtml = null;
             String id = null;
             String sound = null;
@@ -143,7 +147,11 @@ public class FirebasePluginMessagingService extends FirebaseMessagingService {
                 id = remoteMessage.getMessageId();
                 RemoteMessage.Notification notification = remoteMessage.getNotification();
                 title = notification.getTitle();
+                titleLocKey = notification.getTitleLocalizationKey();
+                titleLocArgs = notification.getTitleLocalizationArgs();
                 body = notification.getBody();
+                bodyLocKey = notification.getBodyLocalizationKey();
+                bodyLocArgs = notification.getBodyLocalizationArgs();
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     channelId = notification.getChannelId();
                 }
@@ -152,6 +160,14 @@ public class FirebasePluginMessagingService extends FirebaseMessagingService {
                 icon = notification.getIcon();
                 if (notification.getImageUrl() != null) {
                     image = notification.getImageUrl().toString();
+                }
+                if (!TextUtils.isEmpty(titleLocKey)) {
+                    int titleId = getResources().getIdentifier(titleLocKey, "string", getPackageName());
+                    title = String.format(getResources().getString(titleId), (Object[])titleLocArgs);
+                }
+                if (!TextUtils.isEmpty(bodyLocKey)) {
+                    int bodyId = getResources().getIdentifier(bodyLocKey, "string", getPackageName());
+                    body = String.format(getResources().getString(bodyId), (Object[])bodyLocArgs);
                 }
             }else{
                 Log.i(TAG, "Received message: data");
@@ -240,9 +256,21 @@ public class FirebasePluginMessagingService extends FirebaseMessagingService {
         this.putKVInBundle("ttl", String.valueOf(remoteMessage.getTtl()), bundle);
 
         if (showNotification) {
-            Intent intent = new Intent(this, OnNotificationOpenReceiver.class);
-            intent.putExtras(bundle);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, id.hashCode(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            Intent intent;
+            PendingIntent pendingIntent;
+            final int flag = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE : PendingIntent.FLAG_UPDATE_CURRENT;  // Only add on platform levels that support FLAG_MUTABLE
+
+            if(getApplicationInfo().targetSdkVersion >= Build.VERSION_CODES.S && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                intent = new Intent(this, OnNotificationReceiverActivity.class);
+                intent.putExtras(bundle);
+                pendingIntent = PendingIntent.getActivity(this, id.hashCode(), intent, flag);
+            }else{
+                intent = new Intent(this, OnNotificationOpenReceiver.class);
+                intent.putExtras(bundle);
+                pendingIntent = PendingIntent.getBroadcast(this, id.hashCode(), intent, flag);
+            }
+
 
             // Channel
             if(channelId == null || !FirebasePlugin.channelExists(channelId)){
@@ -251,7 +279,6 @@ public class FirebasePluginMessagingService extends FirebaseMessagingService {
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
                 Log.d(TAG, "Channel ID: "+channelId);
             }
-
 
 
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, channelId);
@@ -355,14 +382,14 @@ public class FirebasePluginMessagingService extends FirebaseMessagingService {
 
                 int largeIconResID;
                 if (customLargeIconResID != 0 || defaultLargeIconResID != 0) {
-					if (customLargeIconResID != 0) {
-	                    largeIconResID = customLargeIconResID;
-	                    Log.d(TAG, "Large icon: custom="+icon);
-	                }else{
-	                    Log.d(TAG, "Large icon: default="+defaultLargeIconName);
-	                    largeIconResID = defaultLargeIconResID;
-	                }
-	                notificationBuilder.setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(), largeIconResID));
+                    if (customLargeIconResID != 0) {
+                        largeIconResID = customLargeIconResID;
+                        Log.d(TAG, "Large icon: custom="+icon);
+                    }else{
+                        Log.d(TAG, "Large icon: default="+defaultLargeIconName);
+                        largeIconResID = defaultLargeIconResID;
+                    }
+                    notificationBuilder.setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(), largeIconResID));
                 }
             }
 
@@ -408,7 +435,6 @@ public class FirebasePluginMessagingService extends FirebaseMessagingService {
             }
             Log.d(TAG, "Priority: " + iPriority);
             notificationBuilder.setPriority(iPriority);
-
 
             // Build notification
             Notification notification = notificationBuilder.build();
