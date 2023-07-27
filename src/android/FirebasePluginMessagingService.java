@@ -258,6 +258,7 @@ public class FirebasePluginMessagingService extends FirebaseMessagingService {
             notificationBuilder
                     .setContentTitle(title)
                     .setAutoCancel(true)
+                    .setForegroundServiceBehavior(Notification.FOREGROUND_SERVICE_IMMEDIATE)
                     .setContentIntent(pendingIntent);
             String cType = "call";
             if (customType != null && customType.equals(cType)) {

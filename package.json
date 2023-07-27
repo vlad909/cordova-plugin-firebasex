@@ -1,6 +1,6 @@
 {
   "name": "@itadori/cordova-plugin-firebasex",
-  "version": "14.0.17",
+  "version": "14.0.18",
   "description": "Cordova plugin for Google Firebase",
   "types": "./types/index.d.ts",
   "author": "Dave Alden",
