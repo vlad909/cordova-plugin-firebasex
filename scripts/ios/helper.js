@@ -19,38 +19,38 @@ var versionRegex = /\d+\.\d+\.\d+[^'"]*/,
     iosDeploymentTargetPodRegEx = /platform :ios, '(\d+\.\d+\.?\d*)'/;
 
 // Internal functions
-function ensureUrlSchemeInPlist(urlScheme, appPlist) {
+function ensureUrlSchemeInPlist(urlScheme, appPlist){
     var appPlistModified = false;
-    if (!appPlist['CFBundleURLTypes']) appPlist['CFBundleURLTypes'] = [];
+    if(!appPlist['CFBundleURLTypes']) appPlist['CFBundleURLTypes'] = [];
     var entry, entryIndex, i, j, alreadyExists = false;
 
-    for (i = 0; i < appPlist['CFBundleURLTypes'].length; i++) {
+    for(i=0; i<appPlist['CFBundleURLTypes'].length; i++){
         var thisEntry = appPlist['CFBundleURLTypes'][i];
-        if (thisEntry['CFBundleURLSchemes']) {
-            for (j = 0; j < thisEntry['CFBundleURLSchemes'].length; j++) {
-                if (thisEntry['CFBundleURLSchemes'][j] === urlScheme) {
+        if(thisEntry['CFBundleURLSchemes']){
+            for(j=0; j<thisEntry['CFBundleURLSchemes'].length; j++){
+                if(thisEntry['CFBundleURLSchemes'][j] === urlScheme){
                     alreadyExists = true;
                     break;
                 }
             }
         }
-        if (thisEntry['CFBundleTypeRole'] === 'Editor') {
+        if(thisEntry['CFBundleTypeRole'] === 'Editor'){
             entry = thisEntry;
             entryIndex = i;
         }
     }
-    if (!alreadyExists) {
-        if (!entry) entry = {};
-        if (!entry['CFBundleTypeRole']) entry['CFBundleTypeRole'] = 'Editor';
-        if (!entry['CFBundleURLSchemes']) entry['CFBundleURLSchemes'] = [];
+    if(!alreadyExists){
+        if(!entry) entry = {};
+        if(!entry['CFBundleTypeRole']) entry['CFBundleTypeRole'] = 'Editor';
+        if(!entry['CFBundleURLSchemes']) entry['CFBundleURLSchemes'] = [];
         entry['CFBundleURLSchemes'].push(urlScheme)
-        if (typeof entryIndex === "undefined") entryIndex = i;
+        if(typeof entryIndex === "undefined") entryIndex = i;
         appPlist['CFBundleURLTypes'][entryIndex] = entry;
         appPlistModified = true;
-        utilities.log('cordova-plugin-firebasex: Added URL scheme "' + urlScheme + '"');
+        utilities.log('cordova-plugin-firebasex: Added URL scheme "'+urlScheme+'"');
     }
 
-    return { plist: appPlist, modified: appPlistModified }
+    return {plist: appPlist, modified: appPlistModified}
 }
 
 // Public functions
@@ -180,7 +180,7 @@ module.exports = {
         fs.writeFileSync(path.resolve(xcodeProjectPath), xcodeProject.writeSync());
     },
 
-    ensureRunpathSearchPath: function (context, xcodeProjectPath) {
+    ensureRunpathSearchPath: function(context, xcodeProjectPath){
 
         function addRunpathSearchBuildProperty(proj, build) {
             let LD_RUNPATH_SEARCH_PATHS = proj.getBuildProperty("LD_RUNPATH_SEARCH_PATHS", build);
@@ -218,14 +218,14 @@ module.exports = {
         // Finally, write the .pbxproj back out to disk.
         fs.writeFileSync(path.resolve(xcodeProjectPath), xcodeProject.writeSync());
     },
-    applyPodsPostInstall: function (pluginVariables, iosPlatform) {
+    applyPodsPostInstall: function(pluginVariables, iosPlatform){
         var podFileModified = false,
             podFilePath = iosPlatform.podFile,
             podFile = fs.readFileSync(path.resolve(podFilePath)).toString(),
             DEBUG_INFORMATION_FORMAT = pluginVariables['IOS_STRIP_DEBUG'] && pluginVariables['IOS_STRIP_DEBUG'] === 'true' ? 'dwarf' : 'dwarf-with-dsym',
             IPHONEOS_DEPLOYMENT_TARGET = podFile.match(iosDeploymentTargetPodRegEx)[1];
 
-        if (!podFile.match('post_install')) {
+        if(!podFile.match('post_install')){
             podFile += `
 post_install do |installer|
     installer.pods_project.targets.each do |target|
@@ -245,7 +245,7 @@ end
         }
         return podFileModified;
     },
-    applyPluginVarsToPlists: function (pluginVariables, iosPlatform) {
+    applyPluginVarsToPlists: function(pluginVariables, iosPlatform){
         var googlePlist = plist.parse(fs.readFileSync(path.resolve(iosPlatform.dest), 'utf8')),
             appPlist = plist.parse(fs.readFileSync(path.resolve(iosPlatform.appPlist), 'utf8')),
             entitlementsDebugPlist = plist.parse(fs.readFileSync(path.resolve(iosPlatform.entitlementsDebugPlist), 'utf8')),
@@ -254,68 +254,48 @@ end
             appPlistModified = false,
             entitlementsPlistsModified = false;
 
-        if (typeof pluginVariables['FIREBASE_ANALYTICS_COLLECTION_ENABLED'] !== 'undefined') {
-            googlePlist["FIREBASE_ANALYTICS_COLLECTION_ENABLED"] = (pluginVariables['FIREBASE_ANALYTICS_COLLECTION_ENABLED'] !== "false" ? "true" : "false");
+        if(typeof pluginVariables['FIREBASE_ANALYTICS_COLLECTION_ENABLED'] !== 'undefined'){
+            googlePlist["FIREBASE_ANALYTICS_COLLECTION_ENABLED"] = (pluginVariables['FIREBASE_ANALYTICS_COLLECTION_ENABLED'] !== "false" ? "true" : "false") ;
             googlePlistModified = true;
         }
-        if (typeof pluginVariables['FIREBASE_PERFORMANCE_COLLECTION_ENABLED'] !== 'undefined') {
-            googlePlist["FIREBASE_PERFORMANCE_COLLECTION_ENABLED"] = (pluginVariables['FIREBASE_PERFORMANCE_COLLECTION_ENABLED'] !== "false" ? "true" : "false");
+        if(typeof pluginVariables['FIREBASE_PERFORMANCE_COLLECTION_ENABLED'] !== 'undefined'){
+            googlePlist["FIREBASE_PERFORMANCE_COLLECTION_ENABLED"] = (pluginVariables['FIREBASE_PERFORMANCE_COLLECTION_ENABLED'] !== "false" ? "true" : "false") ;
             googlePlistModified = true;
         }
-        if (typeof pluginVariables['FIREBASE_CRASHLYTICS_COLLECTION_ENABLED'] !== 'undefined') {
-            googlePlist["FirebaseCrashlyticsCollectionEnabled"] = (pluginVariables['FIREBASE_CRASHLYTICS_COLLECTION_ENABLED'] !== "false" ? "true" : "false");
+        if(typeof pluginVariables['FIREBASE_CRASHLYTICS_COLLECTION_ENABLED'] !== 'undefined'){
+            googlePlist["FirebaseCrashlyticsCollectionEnabled"] = (pluginVariables['FIREBASE_CRASHLYTICS_COLLECTION_ENABLED'] !== "false" ? "true" : "false") ;
             googlePlistModified = true;
         }
-        if (typeof pluginVariables['GOOGLE_ANALYTICS_ADID_COLLECTION_ENABLED'] !== 'undefined') {
-            googlePlist["GOOGLE_ANALYTICS_ADID_COLLECTION_ENABLED"] = (pluginVariables['GOOGLE_ANALYTICS_ADID_COLLECTION_ENABLED'] !== "false" ? "true" : "false");
-            googlePlistModified = true;
-        }
-        if (typeof pluginVariables['GOOGLE_ANALYTICS_DEFAULT_ALLOW_ANALYTICS_STORAGE'] !== 'undefined') {
-            googlePlist["GOOGLE_ANALYTICS_DEFAULT_ALLOW_ANALYTICS_STORAGE"] = (pluginVariables['GOOGLE_ANALYTICS_DEFAULT_ALLOW_ANALYTICS_STORAGE'] !== "false" ? "true" : "false");
-            googlePlistModified = true;
-        }
-        if (typeof pluginVariables['GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_STORAGE'] !== 'undefined') {
-            googlePlist["GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_STORAGE"] = (pluginVariables['GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_STORAGE'] !== "false" ? "true" : "false");
-            googlePlistModified = true;
-        }
-        if (typeof pluginVariables['GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_USER_DATA'] !== 'undefined') {
-            googlePlist["GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_USER_DATA"] = (pluginVariables['GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_USER_DATA'] !== "false" ? "true" : "false");
-            googlePlistModified = true;
-        }
-        if (typeof pluginVariables['GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_PERSONALIZATION_SIGNALS'] !== 'undefined') {
-            googlePlist["GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_PERSONALIZATION_SIGNALS"] = (pluginVariables['GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_PERSONALIZATION_SIGNALS'] !== "false" ? "true" : "false");
-            googlePlistModified = true;
-        }
-        if (typeof pluginVariables['IOS_SHOULD_ESTABLISH_DIRECT_CHANNEL'] !== 'undefined') {
-            appPlist["shouldEstablishDirectChannel"] = (pluginVariables['IOS_SHOULD_ESTABLISH_DIRECT_CHANNEL'] === "true");
+        if(typeof pluginVariables['IOS_SHOULD_ESTABLISH_DIRECT_CHANNEL'] !== 'undefined'){
+            appPlist["shouldEstablishDirectChannel"] = (pluginVariables['IOS_SHOULD_ESTABLISH_DIRECT_CHANNEL'] === "true") ;
             appPlistModified = true;
         }
-        if (pluginVariables['SETUP_RECAPTCHA_VERIFICATION'] === 'true') {
+        if(pluginVariables['SETUP_RECAPTCHA_VERIFICATION'] === 'true'){
             var reversedClientId = googlePlist['REVERSED_CLIENT_ID'];
             var result = ensureUrlSchemeInPlist(reversedClientId, appPlist);
-            if (result.modified) {
+            if(result.modified){
                 appPlist = result.plist;
                 appPlistModified = true;
             }
         }
-        if (pluginVariables['IOS_ENABLE_APPLE_SIGNIN'] === 'true') {
+        if(pluginVariables['IOS_ENABLE_APPLE_SIGNIN'] === 'true'){
             entitlementsDebugPlist["com.apple.developer.applesignin"] = ["Default"];
             entitlementsReleasePlist["com.apple.developer.applesignin"] = ["Default"];
             entitlementsPlistsModified = true;
         }
 
-        if (pluginVariables['IOS_ENABLE_CRITICAL_ALERTS_ENABLED'] === 'true') {
+        if(pluginVariables['IOS_ENABLE_CRITICAL_ALERTS_ENABLED'] === 'true'){
             entitlementsDebugPlist["com.apple.developer.usernotifications.critical-alerts"] = true;
             entitlementsReleasePlist["com.apple.developer.usernotifications.critical-alerts"] = true;
             entitlementsPlistsModified = true;
         }
 
-        if (typeof pluginVariables['FIREBASE_FCM_AUTOINIT_ENABLED'] !== 'undefined') {
-            appPlist["FirebaseMessagingAutoInitEnabled"] = (pluginVariables['FIREBASE_FCM_AUTOINIT_ENABLED'] === "true");
+        if(typeof pluginVariables['FIREBASE_FCM_AUTOINIT_ENABLED'] !== 'undefined'){
+            appPlist["FirebaseMessagingAutoInitEnabled"] = (pluginVariables['FIREBASE_FCM_AUTOINIT_ENABLED'] === "true") ;
             appPlistModified = true;
         }
 
-        if (pluginVariables['IOS_FCM_ENABLED'] === 'false') {
+        if(pluginVariables['IOS_FCM_ENABLED'] === 'false'){
             // Use GoogleService-Info.plist to pass this to the native part reducing noise in Info.plist.
             // A prefix should make it more clear that this is not the variable of the SDK.
             googlePlist["FIREBASEX_IOS_FCM_ENABLED"] = false;
@@ -325,93 +305,93 @@ end
             appPlistModified = true;
         }
 
-        if (googlePlistModified) fs.writeFileSync(path.resolve(iosPlatform.dest), plist.build(googlePlist));
-        if (appPlistModified) fs.writeFileSync(path.resolve(iosPlatform.appPlist), plist.build(appPlist));
-        if (entitlementsPlistsModified) {
+        if(googlePlistModified) fs.writeFileSync(path.resolve(iosPlatform.dest), plist.build(googlePlist));
+        if(appPlistModified) fs.writeFileSync(path.resolve(iosPlatform.appPlist), plist.build(appPlist));
+        if(entitlementsPlistsModified){
             fs.writeFileSync(path.resolve(iosPlatform.entitlementsDebugPlist), plist.build(entitlementsDebugPlist));
             fs.writeFileSync(path.resolve(iosPlatform.entitlementsReleasePlist), plist.build(entitlementsReleasePlist));
         }
     },
-    applyPluginVarsToPodfile: function (pluginVariables, iosPlatform) {
+    applyPluginVarsToPodfile: function(pluginVariables, iosPlatform){
         var podFileContents = fs.readFileSync(path.resolve(iosPlatform.podFile), 'utf8'),
             podFileModified = false;
 
-        if (pluginVariables['IOS_FIREBASE_SDK_VERSION']) {
-            if (pluginVariables['IOS_FIREBASE_SDK_VERSION'].match(versionRegex)) {
+        if(pluginVariables['IOS_FIREBASE_SDK_VERSION']){
+            if(pluginVariables['IOS_FIREBASE_SDK_VERSION'].match(versionRegex)){
                 var matches = podFileContents.match(firebasePodRegex);
-                if (matches) {
+                if(matches){
                     matches.forEach((match) => {
                         var currentVersion = match.match(versionRegex)[0];
-                        if (!match.match(pluginVariables['IOS_FIREBASE_SDK_VERSION'])) {
+                        if(!match.match(pluginVariables['IOS_FIREBASE_SDK_VERSION'])){
                             podFileContents = podFileContents.replace(match, match.replace(currentVersion, pluginVariables['IOS_FIREBASE_SDK_VERSION']));
                             podFileModified = true;
                         }
                     });
-                    if (podFileModified) utilities.log("Firebase iOS SDK version set to v" + pluginVariables['IOS_FIREBASE_SDK_VERSION'] + " in Podfile");
+                    if(podFileModified) utilities.log("Firebase iOS SDK version set to v"+pluginVariables['IOS_FIREBASE_SDK_VERSION']+" in Podfile");
                 }
-            } else {
-                throw new Error("The value \"" + pluginVariables['IOS_FIREBASE_SDK_VERSION'] + "\" for IOS_FIREBASE_SDK_VERSION is not a valid version in the format 'X.Y.Z'")
+            }else{
+                throw new Error("The value \""+pluginVariables['IOS_FIREBASE_SDK_VERSION']+"\" for IOS_FIREBASE_SDK_VERSION is not a valid version in the format 'X.Y.Z'")
             }
         }
 
-        if (pluginVariables['IOS_GOOGLE_SIGIN_VERSION']) {
-            if (pluginVariables['IOS_GOOGLE_SIGIN_VERSION'].match(versionRegex)) {
+        if(pluginVariables['IOS_GOOGLE_SIGIN_VERSION']){
+            if(pluginVariables['IOS_GOOGLE_SIGIN_VERSION'].match(versionRegex)){
                 var matches = podFileContents.match(googleSignInPodRegEx);
-                if (matches) {
+                if(matches){
                     matches.forEach((match) => {
                         var currentVersion = match.match(versionRegex)[0];
-                        if (!match.match(pluginVariables['IOS_GOOGLE_SIGIN_VERSION'])) {
+                        if(!match.match(pluginVariables['IOS_GOOGLE_SIGIN_VERSION'])){
                             podFileContents = podFileContents.replace(match, match.replace(currentVersion, pluginVariables['IOS_GOOGLE_SIGIN_VERSION']));
                             podFileModified = true;
                         }
                     });
-                    if (podFileModified) utilities.log("Google Sign In version set to v" + pluginVariables['IOS_GOOGLE_SIGIN_VERSION'] + " in Podfile");
+                    if(podFileModified) utilities.log("Google Sign In version set to v"+pluginVariables['IOS_GOOGLE_SIGIN_VERSION']+" in Podfile");
                 }
-            } else {
-                throw new Error("The value \"" + pluginVariables['IOS_GOOGLE_SIGIN_VERSION'] + "\" for IOS_GOOGLE_SIGIN_VERSION is not a valid version in the format 'X.Y.Z'")
+            }else{
+                throw new Error("The value \""+pluginVariables['IOS_GOOGLE_SIGIN_VERSION']+"\" for IOS_GOOGLE_SIGIN_VERSION is not a valid version in the format 'X.Y.Z'")
             }
         }
 
-        if (pluginVariables['IOS_GOOGLE_TAG_MANAGER_VERSION']) {
-            if (pluginVariables['IOS_GOOGLE_TAG_MANAGER_VERSION'].match(versionRegex)) {
+        if(pluginVariables['IOS_GOOGLE_TAG_MANAGER_VERSION']){
+            if(pluginVariables['IOS_GOOGLE_TAG_MANAGER_VERSION'].match(versionRegex)){
                 var matches = podFileContents.match(googleTagManagerPodRegEx);
-                if (matches) {
+                if(matches){
                     matches.forEach((match) => {
                         var currentVersion = match.match(versionRegex)[0];
-                        if (!match.match(pluginVariables['IOS_GOOGLE_TAG_MANAGER_VERSION'])) {
+                        if(!match.match(pluginVariables['IOS_GOOGLE_TAG_MANAGER_VERSION'])){
                             podFileContents = podFileContents.replace(match, match.replace(currentVersion, pluginVariables['IOS_GOOGLE_TAG_MANAGER_VERSION']));
                             podFileModified = true;
                         }
                     });
-                    if (podFileModified) utilities.log("Google Tag Manager version set to v" + pluginVariables['IOS_GOOGLE_TAG_MANAGER_VERSION'] + " in Podfile");
+                    if(podFileModified) utilities.log("Google Tag Manager version set to v"+pluginVariables['IOS_GOOGLE_TAG_MANAGER_VERSION']+" in Podfile");
                 }
-            } else {
-                throw new Error("The value \"" + pluginVariables['IOS_GOOGLE_TAG_MANAGER_VERSION'] + "\" for IOS_GOOGLE_TAG_MANAGER_VERSION is not a valid version in the format 'X.Y.Z'")
+            }else{
+                throw new Error("The value \""+pluginVariables['IOS_GOOGLE_TAG_MANAGER_VERSION']+"\" for IOS_GOOGLE_TAG_MANAGER_VERSION is not a valid version in the format 'X.Y.Z'")
             }
         }
 
-        if (pluginVariables['IOS_USE_PRECOMPILED_FIRESTORE_POD'] === 'true') {
+        if(pluginVariables['IOS_USE_PRECOMPILED_FIRESTORE_POD'] === 'true'){
             var standardFirestorePodMatches = podFileContents.match(standardFirestorePodRegEx);
-            if (standardFirestorePodMatches) {
+            if(standardFirestorePodMatches){
                 podFileContents = podFileContents.replace(standardFirestorePodMatches[0], prebuiltFirestorePodTemplate.replace('{version}', standardFirestorePodMatches[1]));
                 podFileModified = true;
                 utilities.log("Configured Podfile for pre-built Firestore pod");
             }
         }
-        if (podFileModified) {
+        if(podFileModified) {
             fs.writeFileSync(path.resolve(iosPlatform.podFile), podFileContents);
         }
 
         return podFileModified;
     },
-    ensureEncodedAppIdInUrlSchemes: function (iosPlatform) {
+    ensureEncodedAppIdInUrlSchemes: function (iosPlatform){
         var googlePlist = plist.parse(fs.readFileSync(path.resolve(iosPlatform.dest), 'utf8')),
             appPlist = plist.parse(fs.readFileSync(path.resolve(iosPlatform.appPlist), 'utf8')),
             googleAppId = googlePlist["GOOGLE_APP_ID"],
-            encodedAppId = 'app-' + googleAppId.replace(/:/g, '-');
+            encodedAppId = 'app-'+googleAppId.replace(/:/g,'-');
 
         var result = ensureUrlSchemeInPlist(encodedAppId, appPlist);
-        if (result.modified) {
+        if(result.modified){
             fs.writeFileSync(path.resolve(iosPlatform.appPlist), plist.build(result.plist));
         }
     }
