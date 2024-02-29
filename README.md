@@ -702,11 +702,17 @@ To do this, set the following plugin variables to `false` at plugin install time
      --variable GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_USER_DATA=false \
      --variable GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_PERSONALIZATION_SIGNALS=false
 
-This will disable data collection (on both Android & iOS) until you call [setAnalyticsCollectionEnabled](#setanalyticscollectionenabled), [setPerformanceCollectionEnabled](#setperformancecollectionenabled) and [setCrashlyticsCollectionEnabled](#setcrashlyticscollectionenabled):
+This will disable data collection (on both Android & iOS) until you call [setAnalyticsCollectionEnabled](#setanalyticscollectionenabled), [setPerformanceCollectionEnabled](#setperformancecollectionenabled), [setCrashlyticsCollectionEnabled](#setcrashlyticscollectionenabled) and [setAnalyticsConsentMode](#setanalyticsconsentmode):
 
        FirebasePlugin.setAnalyticsCollectionEnabled(true);
        FirebasePlugin.setPerformanceCollectionEnabled(true);
        FirebasePlugin.setCrashlyticsCollectionEnabled(true);
+       FirebasePlugin.setAnalyticsConsentMode({
+           ANALYTICS_STORAGE: "GRANTED",
+           AD_STORAGE: "GRANTED",
+           AD_USER_DATA: "GRANTED",
+           AD_PERSONALIZATION: "GRANTED",
+       });
 
 Notes:
 
