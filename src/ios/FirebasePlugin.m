@@ -30,6 +30,7 @@ static NSString*const FIREBASE_CRASHLYTICS_COLLECTION_ENABLED = @"FIREBASE_CRASH
 static NSString*const FirebaseCrashlyticsCollectionEnabled = @"FirebaseCrashlyticsCollectionEnabled"; //plist
 static NSString*const FIREBASE_ANALYTICS_COLLECTION_ENABLED = @"FIREBASE_ANALYTICS_COLLECTION_ENABLED";
 static NSString*const FIREBASE_PERFORMANCE_COLLECTION_ENABLED = @"FIREBASE_PERFORMANCE_COLLECTION_ENABLED";
+
 static NSString*const GOOGLE_ANALYTICS_ADID_COLLECTION_ENABLED = @"GOOGLE_ANALYTICS_ADID_COLLECTION_ENABLED";
 static NSString*const GOOGLE_ANALYTICS_DEFAULT_ALLOW_ANALYTICS_STORAGE = @"GOOGLE_ANALYTICS_DEFAULT_ALLOW_ANALYTICS_STORAGE";
 static NSString*const GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_STORAGE = @"GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_STORAGE";
@@ -2640,148 +2641,52 @@ static FIROAuthProvider* oauthProvider;
 
 
 /*
- * Google Analytics ADID Collection Enabled
+ * Google Analytics Consent Mode
  */
- - (void)setGoogleAnalyticsAdidCollectionEnabled:(CDVInvokedUrlCommand *)command {
+- (void)setAnalyticsConsentMode:(CDVInvokedUrlCommand*)command {
     [self.commandDelegate runInBackground:^{
-        @try {
-            BOOL enabled = [[command argumentAtIndex:0] boolValue];
-            CDVPluginResult* pluginResult;
-            [self setPreferenceFlag:GOOGLE_ANALYTICS_ADID_COLLECTION_ENABLED flag:enabled];
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        CDVPluginResult* pluginResult = nil;
+        NSDictionary* consentObject = [command.arguments objectAtIndex:0];
 
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-        }@catch (NSException *exception) {
-            [self handlePluginExceptionWithContext:exception :command];
+        NSMutableDictionary* consentSettings = [[NSMutableDictionary alloc] init];
+
+        NSEnumerator *enumerator = [consentObject keyEnumerator];
+        id key;
+        while ((key = [enumerator nextObject])) {
+            NSString* consentType = [self consentTypeFromString:key];
+            NSString* consentStatus = [self consentStatusFromString:[consentObject objectForKey:key]];
+            [consentSettings setObject:consentStatus forKey:consentType];
         }
+
+        [FIRAnalytics setConsent:consentSettings];
+
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }];
 }
 
-- (void)isGoogleAnalyticsAdidCollectionEnabled:(CDVInvokedUrlCommand*)command {
-    [self.commandDelegate runInBackground:^{
-        @try {            
-            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:[self getPreferenceFlag:GOOGLE_ANALYTICS_ADID_COLLECTION_ENABLED]];
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-        }@catch (NSException *exception) {
-            [self handlePluginExceptionWithContext:exception :command];
-        }
-    }];
+- (NSString*)consentTypeFromString:(NSString*)consentTypeString {
+    if ([consentTypeString isEqualToString:@"ANALYTICS_STORAGE"]) {
+        return FIRConsentTypeAnalyticsStorage;
+    } else if ([consentTypeString isEqualToString:@"AD_STORAGE"]) {
+        return FIRConsentTypeAdStorage;
+    } else if ([consentTypeString isEqualToString:@"AD_PERSONALIZATION"]) {
+        return FIRConsentTypeAdPersonalization;
+    } else if ([consentTypeString isEqualToString:@"AD_USER_DATA"]) {
+        return FIRConsentTypeAdUserData;
+    } else {
+        return nil;
+    }
 }
 
-/*
- * Google Analytics Default Allow Analytics Storage
- */
-- (void)setGoogleAnalyticsDefaultAllowAnalyticsStorage:(CDVInvokedUrlCommand *)command {
-    [self.commandDelegate runInBackground:^{
-        @try {
-            BOOL enabled = [[command argumentAtIndex:0] boolValue];
-            CDVPluginResult* pluginResult;
-            [self setPreferenceFlag:GOOGLE_ANALYTICS_DEFAULT_ALLOW_ANALYTICS_STORAGE flag:enabled];
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-        }@catch (NSException *exception) {
-            [self handlePluginExceptionWithContext:exception :command];
-        }
-    }];
-}
-
-- (void)isGoogleAnalyticsDefaultAllowAnalyticsStorageEnabled:(CDVInvokedUrlCommand*)command {
-    [self.commandDelegate runInBackground:^{
-        @try {
-            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:[self getPreferenceFlag:GOOGLE_ANALYTICS_DEFAULT_ALLOW_ANALYTICS_STORAGE]];
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-        }@catch (NSException *exception) {
-            [self handlePluginExceptionWithContext:exception :command];
-        }
-    }];
-}
-
-/*
- * Google Analytics Default Allow Ad Storage
- */
-- (void)setGoogleAnalyticsDefaultAllowAdStorage:(CDVInvokedUrlCommand *)command {
-    [self.commandDelegate runInBackground:^{
-        @try {
-            BOOL enabled = [[command argumentAtIndex:0] boolValue];
-            CDVPluginResult* pluginResult;
-            [self setPreferenceFlag:GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_STORAGE flag:enabled];
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-        }@catch (NSException *exception) {
-            [self handlePluginExceptionWithContext:exception :command];
-        }
-    }];
-}
-
-- (void)isGoogleAnalyticsDefaultAllowAdStorageEnabled:(CDVInvokedUrlCommand*)command {
-    [self.commandDelegate runInBackground:^{
-        @try {
-            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:[self getPreferenceFlag:GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_STORAGE]];
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-        }@catch (NSException *exception) {
-            [self handlePluginExceptionWithContext:exception :command];
-        }
-    }];
-}
-
-/*
- * Google Analytics Default Allow Ad User Data
- */
-- (void)setGoogleAnalyticsDefaultAllowAdUserData:(CDVInvokedUrlCommand *)command {
-    [self.commandDelegate runInBackground:^{
-        @try {
-            BOOL enabled = [[command argumentAtIndex:0] boolValue];
-            CDVPluginResult* pluginResult;
-            [self setPreferenceFlag:GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_USER_DATA flag:enabled];
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-        }@catch (NSException *exception) {
-            [self handlePluginExceptionWithContext:exception :command];
-        }
-    }];
-}
-
-- (void)isGoogleAnalyticsDefaultAllowAdUserDataEnabled:(CDVInvokedUrlCommand*)command {
-    [self.commandDelegate runInBackground:^{
-        @try {
-            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:[self getPreferenceFlag:GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_USER_DATA]];
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-        }@catch (NSException *exception) {
-            [self handlePluginExceptionWithContext:exception :command];
-        }
-    }];
-}
-
-/*
- * Google Analytics Default Allow Ad Personalization Signals
- */
-- (void)setGoogleAnalyticsDefaultAllowAdPersonalizationSignals:(CDVInvokedUrlCommand *)command {
-    [self.commandDelegate runInBackground:^{
-        @try {
-            BOOL enabled = [[command argumentAtIndex:0] boolValue];
-            CDVPluginResult* pluginResult;
-            [self setPreferenceFlag:GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_PERSONALIZATION_SIGNALS flag:enabled];
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-        }@catch (NSException *exception) {
-            [self handlePluginExceptionWithContext:exception :command];
-        }
-    }];
-}
-
-- (void)isGoogleAnalyticsDefaultAllowAdPersonalizationSignalsEnabled:(CDVInvokedUrlCommand*)command {
-    [self.commandDelegate runInBackground:^{
-        @try {
-            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:[self getPreferenceFlag:GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_PERSONALIZATION_SIGNALS]];
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-        }@catch (NSException *exception) {
-            [self handlePluginExceptionWithContext:exception :command];
-        }
-    }];
+- (NSString*)consentStatusFromString:(NSString*)consentStatusString {
+    if ([consentStatusString isEqualToString:@"GRANTED"]) {
+        return FIRConsentStatusGranted;
+    } else if ([consentStatusString isEqualToString:@"DENIED"]) {
+        return FIRConsentStatusDenied;
+    } else {
+        return FIRConsentStatusUnknown;
+    }
 }
 
 /*************************************************/
