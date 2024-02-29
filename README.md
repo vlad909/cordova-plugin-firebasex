@@ -232,6 +232,11 @@ Or you can manually edit the values in your project's `package.json` under `cord
 - `FIREBASE_ANALYTICS_WITHOUT_ADS` - whether to disable advertising ID collection in Analytics. Defaults to false.
   - Note that this is a [post-install plugin variable](#post-install-plugin-variables) so an additional step is required to activate the plugin variable the first time it is specified.
 See [Disable data collection on startup](#disable-data-collection-on-startup) for more info.
+- `GOOGLE_ANALYTICS_ADID_COLLECTION_ENABLED` - determines whether Google Analytics collects Advertising IDs (ADIDs) for ad targeting and attribution purposes. If set to true, Google Analytics will collect ADIDs; if set to false, it will not collect ADIDs. Defaults to true.
+- `GOOGLE_ANALYTICS_DEFAULT_ALLOW_ANALYTICS_STORAGE` - specifies the default setting for allowing Google Analytics to store analytics data. If set to true, Google Analytics is allowed to store analytics data; if set to false, it is not allowed to store analytics data by default.
+- `GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_STORAGE` - specifies the default setting for allowing Google Analytics to store ad-related data. If set to true, Google Analytics is allowed to store ad-related data; if set to false, it is not allowed to store ad-related data by default. Defaults to true.
+- `GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_USER_DATA` - specifies the default setting for allowing Google Analytics to collect user-related data for ad targeting and personalization. If set to true, Google Analytics is allowed to collect user-related data for ad targeting and personalization; if set to false, it is not allowed to collect such data by default. Defaults to true.
+- `GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_PERSONALIZATION_SIGNALS` - specifies the default setting for allowing Google Analytics to collect signals related to ad personalization. If set to true, Google Analytics is allowed to collect ad personalization signals; if set to false, it is not allowed to collect such signals by default. Defaults to true.
 
 ### Android only
 The following plugin variables are used to specify the Firebase SDK versions as Gradle dependencies on Android:
@@ -650,12 +655,22 @@ To do this, set the following plugin variables to `false` at plugin install time
 * `FIREBASE_ANALYTICS_COLLECTION_ENABLED`
 * `FIREBASE_PERFORMANCE_COLLECTION_ENABLED`
 * `FIREBASE_CRASHLYTICS_COLLECTION_ENABLED`
+* `GOOGLE_ANALYTICS_ADID_COLLECTION_ENABLED`
+* `GOOGLE_ANALYTICS_DEFAULT_ALLOW_ANALYTICS_STORAGE`
+* `GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_STORAGE`
+* `GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_USER_DATA`
+* `GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_PERSONALIZATION_SIGNALS`
 
 
     cordova plugin add cordova-plugin-firebasex \
         --variable FIREBASE_ANALYTICS_COLLECTION_ENABLED=false \
         --variable FIREBASE_PERFORMANCE_COLLECTION_ENABLED=false \
-        --variable FIREBASE_CRASHLYTICS_COLLECTION_ENABLED=false
+        --variable FIREBASE_CRASHLYTICS_COLLECTION_ENABLED=false \
+        --variable GOOGLE_ANALYTICS_ADID_COLLECTION_ENABLED=false \
+        --variable GOOGLE_ANALYTICS_DEFAULT_ALLOW_ANALYTICS_STORAGE=false \
+        --variable GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_STORAGE=false \
+        --variable GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_USER_DATA=false \
+        --variable GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_PERSONALIZATION_SIGNALS=false
 
 This will disable data collection (on both Android & iOS) until you call [setAnalyticsCollectionEnabled](#setanalyticscollectionenabled), [setPerformanceCollectionEnabled](#setperformancecollectionenabled) and [setCrashlyticsCollectionEnabled](#setcrashlyticscollectionenabled):
 
