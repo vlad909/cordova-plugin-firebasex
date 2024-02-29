@@ -56,6 +56,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.Timestamp;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.analytics.FirebaseAnalytics.ConsentType;
+import com.google.firebase.analytics.FirebaseAnalytics.ConsentStatus;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.OAuthCredential;
 import com.google.firebase.auth.AuthResult;
@@ -113,6 +115,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.List;
 import java.util.Date;
+import java.util.EnumMap;
 
 // Firebase PhoneAuth
 import java.util.concurrent.TimeUnit;
@@ -157,11 +160,13 @@ public class FirebasePlugin extends CordovaPlugin {
     private static final String CRASHLYTICS_COLLECTION_ENABLED = "firebase_crashlytics_collection_enabled";
     private static final String ANALYTICS_COLLECTION_ENABLED = "firebase_analytics_collection_enabled";
     private static final String PERFORMANCE_COLLECTION_ENABLED = "firebase_performance_collection_enabled";
+
     private static final String GOOGLE_ANALYTICS_ADID_COLLECTION_ENABLED = "google_analytics_adid_collection_enabled";
     private static final String GOOGLE_ANALYTICS_DEFAULT_ALLOW_ANALYTICS_STORAGE = "google_analytics_default_allow_analytics_storage";
     private static final String GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_STORAGE = "firebase_performance_collectigoogle_analytics_default_allow_ad_storageon_enabled";
     private static final String GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_USER_DATA = "google_analytics_default_allow_ad_user_data";
     private static final String GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_PERSONALIZATION_SIGNALS = "google_analytics_default_allow_ad_personalization_signals";
+
 
     protected static final String POST_NOTIFICATIONS = "POST_NOTIFICATIONS";
     protected static final int POST_NOTIFICATIONS_PERMISSION_REQUEST_ID = 1;
@@ -419,26 +424,8 @@ public class FirebasePlugin extends CordovaPlugin {
                 this.setCrashlyticsCollectionEnabled(callbackContext, args.getBoolean(0));
             } else if (action.equals("isCrashlyticsCollectionEnabled")) {
                 this.isCrashlyticsCollectionEnabled(callbackContext);
-            } else if (action.equals("setGoogleAnalyticsAdidCollectionEnabled")) {
-                this.setGoogleAnalyticsAdidCollectionEnabled(callbackContext, args.getBoolean(0));
-            } else if (action.equals("isGoogleAnalyticsAdidCollectionEnabled")) {
-                this.isGoogleAnalyticsAdidCollectionEnabled(callbackContext);
-            } else if (action.equals("setGoogleAnalyticsDefaultAllowAnalyticsStorage")) {
-                this.setGoogleAnalyticsDefaultAllowAnalyticsStorage(callbackContext, args.getBoolean(0));
-            } else if (action.equals("isGoogleAnalyticsDefaultAllowAnalyticsStorage")) {
-                this.isGoogleAnalyticsDefaultAllowAnalyticsStorage(callbackContext);
-            } else if (action.equals("setGoogleAnalyticsDefaultAllowAdStorage")) {
-                this.setGoogleAnalyticsDefaultAllowAdStorage(callbackContext, args.getBoolean(0));
-            } else if (action.equals("isGoogleAnalyticsDefaultAllowAdStorage")) {
-                this.isGoogleAnalyticsDefaultAllowAdStorage(callbackContext);
-            } else if (action.equals("setGoogleAnalyticsDefaultAllowAdUserData")) {
-                this.setGoogleAnalyticsDefaultAllowAdUserData(callbackContext, args.getBoolean(0));
-            } else if (action.equals("isGoogleAnalyticsDefaultAllowAdUserData")) {
-                this.isGoogleAnalyticsDefaultAllowAdUserData(callbackContext);
-            } else if (action.equals("setGoogleAnalyticsDefaultAllowAdPersonalizationSignals")) {
-                this.setGoogleAnalyticsDefaultAllowAdPersonalizationSignals(callbackContext, args.getBoolean(0));
-            } else if (action.equals("isGoogleAnalyticsDefaultAllowAdPersonalizationSignals")) {
-                this.isGoogleAnalyticsDefaultAllowAdPersonalizationSignals(callbackContext);
+            } else if (action.equals("setAnalyticsConsentMode")) {
+                this.setAnalyticsConsentMode(callbackContext, args.getJSONObject(0));
             } else if (action.equals("clearAllNotifications")) {
                 this.clearAllNotifications(callbackContext);
             } else if (action.equals("setCrashlyticsCustomKey")) {
@@ -2729,138 +2716,22 @@ public class FirebasePlugin extends CordovaPlugin {
         return getPreference(CRASHLYTICS_COLLECTION_ENABLED);
     }
 
-    private void setGoogleAnalyticsAdidCollectionEnabled(final CallbackContext callbackContext, final boolean enabled) {
+    private void setAnalyticsConsentMode(final CallbackContext callbackContext, final JSONObject consent) {
         cordova.getThreadPool().execute(new Runnable() {
             public void run() {
                 try {
-                    mFirebaseAnalytics.setGoogleAnalyticsAdidCollectionEnabled(enabled);
-                    setPreference(GOOGLE_ANALYTICS_ADID_COLLECTION_ENABLED, enabled);
+                    Map<ConsentType, ConsentStatus> consentMap = new EnumMap<>(ConsentType.class);
+                    Iterator<String> keys = consent.keys();
+
+                    while(keys.hasNext()) {
+                        String key = keys.next();
+                        ConsentType consentType = ConsentType.valueOf(key);
+                        ConsentStatus consentStatus = ConsentStatus.valueOf(consent.getString(key));
+                        consentMap.put(consentType, consentStatus);
+                    }
+
+                    mFirebaseAnalytics.setConsent(consentMap);
                     callbackContext.success();
-                } catch (Exception e) {
-                    handleExceptionWithContext(e, callbackContext);
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
-    private void isGoogleAnalyticsAdidCollectionEnabled(final CallbackContext callbackContext) {
-        cordova.getThreadPool().execute(new Runnable() {
-            public void run() {
-                try {
-                    callbackContext.success(conformBooleanForPluginResult(getPreference(GOOGLE_ANALYTICS_ADID_COLLECTION_ENABLED)));
-                } catch (Exception e) {
-                    handleExceptionWithContext(e, callbackContext);
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
-    private void setGoogleAnalyticsDefaultAllowAnalyticsStorage(final CallbackContext callbackContext, final boolean enabled) {
-        cordova.getThreadPool().execute(new Runnable() {
-            public void run() {
-                try {
-                    mFirebaseAnalytics.setGoogleAnalyticsDefaultAllowAnalyticsStorage(enabled);
-                    setPreference(GOOGLE_ANALYTICS_DEFAULT_ALLOW_ANALYTICS_STORAGE, enabled);
-                    callbackContext.success();
-                } catch (Exception e) {
-                    handleExceptionWithContext(e, callbackContext);
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
-    private void isGoogleAnalyticsDefaultAllowAnalyticsStorage(final CallbackContext callbackContext) {
-        cordova.getThreadPool().execute(new Runnable() {
-            public void run() {
-                try {
-                    callbackContext.success(conformBooleanForPluginResult(getPreference(GOOGLE_ANALYTICS_DEFAULT_ALLOW_ANALYTICS_STORAGE)));
-                } catch (Exception e) {
-                    handleExceptionWithContext(e, callbackContext);
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
-    private void setGoogleAnalyticsDefaultAllowAdStorage(final CallbackContext callbackContext, final boolean enabled) {
-        cordova.getThreadPool().execute(new Runnable() {
-            public void run() {
-                try {
-                    mFirebaseAnalytics.setGoogleAnalyticsDefaultAllowAdStorage(enabled);
-                    setPreference(GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_STORAGE, enabled);
-                    callbackContext.success();
-                } catch (Exception e) {
-                    handleExceptionWithContext(e, callbackContext);
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
-    private void isGoogleAnalyticsDefaultAllowAdStorage(final CallbackContext callbackContext) {
-        cordova.getThreadPool().execute(new Runnable() {
-            public void run() {
-                try {
-                    callbackContext.success(conformBooleanForPluginResult(getPreference(GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_STORAGE)));
-                } catch (Exception e) {
-                    handleExceptionWithContext(e, callbackContext);
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
-    private void setGoogleAnalyticsDefaultAllowAdUserData(final CallbackContext callbackContext, final boolean enabled) {
-        cordova.getThreadPool().execute(new Runnable() {
-            public void run() {
-                try {
-                    mFirebaseAnalytics.setGoogleAnalyticsDefaultAllowAdUserData(enabled);
-                    setPreference(GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_USER_DATA, enabled);
-                    callbackContext.success();
-                } catch (Exception e) {
-                    handleExceptionWithContext(e, callbackContext);
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
-    private void isGoogleAnalyticsDefaultAllowAdUserData(final CallbackContext callbackContext) {
-        cordova.getThreadPool().execute(new Runnable() {
-            public void run() {
-                try {
-                    callbackContext.success(conformBooleanForPluginResult(getPreference(GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_USER_DATA)));
-                } catch (Exception e) {
-                    handleExceptionWithContext(e, callbackContext);
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
-    private void setGoogleAnalyticsDefaultAllowAdPersonalizationSignals(final CallbackContext callbackContext, final boolean enabled) {
-        cordova.getThreadPool().execute(new Runnable() {
-            public void run() {
-                try {
-                    mFirebaseAnalytics.setGoogleAnalyticsDefaultAllowAdPersonalizationSignals(enabled);
-                    setPreference(GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_PERSONALIZATION_SIGNALS, enabled);
-                    callbackContext.success();
-                } catch (Exception e) {
-                    handleExceptionWithContext(e, callbackContext);
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
-    private void isGoogleAnalyticsDefaultAllowAdPersonalizationSignals(final CallbackContext callbackContext) {
-        cordova.getThreadPool().execute(new Runnable() {
-            public void run() {
-                try {
-                    callbackContext.success(conformBooleanForPluginResult(getPreference(GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_PERSONALIZATION_SIGNALS)));
                 } catch (Exception e) {
                     handleExceptionWithContext(e, callbackContext);
                     e.printStackTrace();
