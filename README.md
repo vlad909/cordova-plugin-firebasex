@@ -112,6 +112,7 @@ To help ensure this plugin is kept updated, new features are added and bugfixes 
     -   [Analytics](#analytics)
         -   [setAnalyticsCollectionEnabled](#setanalyticscollectionenabled)
         -   [isAnalyticsCollectionEnabled](#isanalyticscollectionenabled)
+        -   [setAnalyticsConsentMode](#setanalyticsconsentmode)
         -   [logEvent](#logevent)
         -   [setScreenName](#setscreenname)
         -   [setUserId](#setuserid)
