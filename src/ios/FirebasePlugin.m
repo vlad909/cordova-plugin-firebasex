@@ -1602,6 +1602,52 @@ static FIROAuthProvider* oauthProvider;
     }];
 }
 
+- (void)setAnalyticsConsentMode:(CDVInvokedUrlCommand*)command {
+    [self.commandDelegate runInBackground:^{
+        CDVPluginResult* pluginResult = nil;
+        NSDictionary* consentObject = [command.arguments objectAtIndex:0];
+
+        NSMutableDictionary* consentSettings = [[NSMutableDictionary alloc] init];
+
+        NSEnumerator *enumerator = [consentObject keyEnumerator];
+        id key;
+        while ((key = [enumerator nextObject])) {
+            NSString* consentType = [self consentTypeFromString:key];
+            NSString* consentStatus = [self consentStatusFromString:[consentObject objectForKey:key]];
+            [consentSettings setObject:consentStatus forKey:consentType];
+        }
+
+        [FIRAnalytics setConsent:consentSettings];
+
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }];
+}
+
+- (NSString*)consentTypeFromString:(NSString*)consentTypeString {
+    if ([consentTypeString isEqualToString:@"ANALYTICS_STORAGE"]) {
+        return FIRConsentTypeAnalyticsStorage;
+    } else if ([consentTypeString isEqualToString:@"AD_STORAGE"]) {
+        return FIRConsentTypeAdStorage;
+    } else if ([consentTypeString isEqualToString:@"AD_PERSONALIZATION"]) {
+        return FIRConsentTypeAdPersonalization;
+    } else if ([consentTypeString isEqualToString:@"AD_USER_DATA"]) {
+        return FIRConsentTypeAdUserData;
+    } else {
+        return nil;
+    }
+}
+
+- (NSString*)consentStatusFromString:(NSString*)consentStatusString {
+    if ([consentStatusString isEqualToString:@"GRANTED"]) {
+        return FIRConsentStatusGranted;
+    } else if ([consentStatusString isEqualToString:@"DENIED"]) {
+        return FIRConsentStatusDenied;
+    } else {
+        return nil;
+    }
+}
+
 - (void)logEvent:(CDVInvokedUrlCommand *)command {
     [self.commandDelegate runInBackground:^{
         @try {
@@ -2637,56 +2683,6 @@ static FIROAuthProvider* oauthProvider;
             [self handlePluginExceptionWithoutContext:exception];
         }
     }];
-}
-
-
-/*
- * Google Analytics Consent Mode
- */
-- (void)setAnalyticsConsentMode:(CDVInvokedUrlCommand*)command {
-    [self.commandDelegate runInBackground:^{
-        CDVPluginResult* pluginResult = nil;
-        NSDictionary* consentObject = [command.arguments objectAtIndex:0];
-
-        NSMutableDictionary* consentSettings = [[NSMutableDictionary alloc] init];
-
-        NSEnumerator *enumerator = [consentObject keyEnumerator];
-        id key;
-        while ((key = [enumerator nextObject])) {
-            NSString* consentType = [self consentTypeFromString:key];
-            NSString* consentStatus = [self consentStatusFromString:[consentObject objectForKey:key]];
-            [consentSettings setObject:consentStatus forKey:consentType];
-        }
-
-        [FIRAnalytics setConsent:consentSettings];
-
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-    }];
-}
-
-- (NSString*)consentTypeFromString:(NSString*)consentTypeString {
-    if ([consentTypeString isEqualToString:@"ANALYTICS_STORAGE"]) {
-        return FIRConsentTypeAnalyticsStorage;
-    } else if ([consentTypeString isEqualToString:@"AD_STORAGE"]) {
-        return FIRConsentTypeAdStorage;
-    } else if ([consentTypeString isEqualToString:@"AD_PERSONALIZATION"]) {
-        return FIRConsentTypeAdPersonalization;
-    } else if ([consentTypeString isEqualToString:@"AD_USER_DATA"]) {
-        return FIRConsentTypeAdUserData;
-    } else {
-        return nil;
-    }
-}
-
-- (NSString*)consentStatusFromString:(NSString*)consentStatusString {
-    if ([consentStatusString isEqualToString:@"GRANTED"]) {
-        return FIRConsentStatusGranted;
-    } else if ([consentStatusString isEqualToString:@"DENIED"]) {
-        return FIRConsentStatusDenied;
-    } else {
-        return FIRConsentStatusUnknown;
-    }
 }
 
 /*************************************************/
