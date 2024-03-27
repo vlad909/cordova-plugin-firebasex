@@ -119,6 +119,11 @@ export interface FirebasePlugin {
     setAnalyticsCollectionEnabled(
         setEnabled: boolean
     ): void
+    setAnalyticsConsentMode(
+        consent: object,
+        success: (info: object) => void,
+        error: (err: string) => void
+    ): void
     logEvent(
         eventName: string,
         eventProperties: object
