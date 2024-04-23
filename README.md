@@ -2488,6 +2488,23 @@ Set a user property for use in Analytics:
 ```javascript
 FirebasePlugin.setUserProperty("name", "value");
 ```
+### Enable debug_mode to use DebugView
+You can find detailed information [here](https://firebase.google.com/docs/analytics/debugview?hl=es-419#android)
+#### Android
+1) Connect your developer Android device via USB.
+2) Allow the connection on the device.
+3) Open your terminal and run 
+`adb devices -l`
+4) If your device appears run
+`adb shell setprop debug.firebase.analytics.app PACKAGE.NAME`
+
+Now your device is in debug Mode.
+
+Disable it using
+`adb shell setprop debug.firebase.analytics.app .none.`
+
+#### IOS
+Find information [here](https://firebase.google.com/docs/analytics/debugview?hl=es-419#android) 
 
 ### initiateOnDeviceConversionMeasurement
 
