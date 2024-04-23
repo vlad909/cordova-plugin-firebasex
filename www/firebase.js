@@ -158,6 +158,10 @@ exports.isAnalyticsCollectionEnabled = function (success, error) {
     exec(success, error, "FirebasePlugin", "isAnalyticsCollectionEnabled", []);
 };
 
+exports.setAnalyticsConsentMode = function(consent, success, error) {
+    exec(success, error, "FirebasePlugin", "setAnalyticsConsentMode", [consent]);
+};
+
 exports.logEvent = function (name, params, success, error) {
   exec(success, error, "FirebasePlugin", "logEvent", [name, params]);
 };
