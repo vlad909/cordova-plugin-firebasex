@@ -20,186 +20,187 @@ To help ensure this plugin is kept updated, new features are added and bugfixes 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-**Table of Contents**
-
--   [Installation](#installation)
-    -   [Plugin variables](#plugin-variables)
-        -   [Android & iOS](#android--ios)
-        -   [Android only](#android-only)
-        -   [iOS only](#ios-only)
-        -   [Post-install plugin variables](#post-install-plugin-variables)
-    -   [Supported Cordova Versions](#supported-cordova-versions)
-    -   [Supported Mobile Platform Versions](#supported-mobile-platform-versions)
-    -   [Migrating from cordova-plugin-firebase](#migrating-from-cordova-plugin-firebase)
-        -   [Breaking API changes](#breaking-api-changes)
-        -   [Ionic 4+](#ionic-4)
-        -   [Ionic 3](#ionic-3)
--   [Build environment notes](#build-environment-notes)
-    -   [Remote Cloud Build](#remote-cloud-build)
-    -   [Capacitor support](#capacitor-support)
-    -   [Android-specific](#android-specific)
-        -   [Specifying Android library versions](#specifying-android-library-versions)
-        -   [AndroidX](#androidx)
-    -   [Google Play Services and Firebase libraries](#google-play-services-and-firebase-libraries)
-    -   [iOS-specific](#ios-specific)
-        -   [Specifying iOS library versions](#specifying-ios-library-versions)
-        -   [Cocoapods](#cocoapods)
-        -   [Out-of-date pods](#out-of-date-pods)
-        -   [Strip debug symbols](#strip-debug-symbols)
-        -   [Cordova CLI builds](#cordova-cli-builds)
--   [Firebase config setup](#firebase-config-setup)
--   [Disable data collection on startup](#disable-data-collection-on-startup)
--   [Example project](#example-project)
--   [Reporting issues](#reporting-issues)
-    -   [Reporting a bug or problem](#reporting-a-bug-or-problem)
-    -   [Requesting a new feature](#requesting-a-new-feature)
--   [Cloud messaging](#cloud-messaging)
-    -   [Background notifications](#background-notifications)
-    -   [Foreground notifications](#foreground-notifications)
-    -   [Android notifications](#android-notifications)
-        -   [Android background notifications](#android-background-notifications)
-        -   [Android foreground notifications](#android-foreground-notifications)
-        -   [Android Notification Channels](#android-notification-channels)
-        -   [Android Notification Icons](#android-notification-icons)
-        -   [Android Notification Color](#android-notification-color)
-        -   [Android Notification Sound](#android-notification-sound)
-        -   [Android cloud message types](#android-cloud-message-types)
-    -   [iOS notifications](#ios-notifications)
-        -   [iOS background notifications](#ios-background-notifications)
-        -   [iOS notification sound](#ios-notification-sound)
-        -   [iOS critical notifications](#ios-critical-notifications)
-        -   [iOS badge number](#ios-badge-number)
-        -   [iOS actionable notifications](#ios-actionable-notifications)
-        -   [iOS notification settings button](#ios-notification-settings-button)
-    -   [Data messages](#data-messages)
-        -   [Data message notifications](#data-message-notifications)
-    -   [Custom FCM message handling](#custom-fcm-message-handling)
-        -   [Android](#android)
-        -   [iOS](#ios)
-        -   [Example](#example)
--   [InApp Messaging](#inapp-messaging)
--   [Google Tag Manager](#google-tag-manager)
-    -   [Android](#android-1)
-    -   [iOS](#ios-1)
--   [Performance Monitoring](#performance-monitoring)
-    -   [Android Performance Monitoring Gradle plugin](#android-performance-monitoring-gradle-plugin)
--   [API](#api)
-    -   [Notifications and data messages](#notifications-and-data-messages)
-        -   [getToken](#gettoken)
-        -   [getId](#getid)
-        -   [onTokenRefresh](#ontokenrefresh)
-        -   [getAPNSToken](#getapnstoken)
-        -   [onApnsTokenReceived](#onapnstokenreceived)
-        -   [onOpenSettings](#onopensettings)
-        -   [onMessageReceived](#onmessagereceived)
-        -   [grantPermission](#grantpermission)
-        -   [grantCriticalPermission](#grantcriticalpermission)
-        -   [hasPermission](#haspermission)
-        -   [hasCriticalPermission](#hascriticalpermission)
-        -   [unregister](#unregister)
-        -   [isAutoInitEnabled](#isautoinitenabled)
-        -   [setAutoInitEnabled](#setautoinitenabled)
-        -   [setBadgeNumber](#setbadgenumber)
-        -   [getBadgeNumber](#getbadgenumber)
-        -   [clearAllNotifications](#clearallnotifications)
-        -   [subscribe](#subscribe)
-        -   [unsubscribe](#unsubscribe)
-        -   [createChannel](#createchannel)
-        -   [setDefaultChannel](#setdefaultchannel)
-        -   [Default Android Channel Properties](#default-android-channel-properties)
-        -   [deleteChannel](#deletechannel)
-        -   [listChannels](#listchannels)
-    -   [Analytics](#analytics)
-        -   [setAnalyticsCollectionEnabled](#setanalyticscollectionenabled)
-        -   [isAnalyticsCollectionEnabled](#isanalyticscollectionenabled)
-        -   [setAnalyticsConsentMode](#setanalyticsconsentmode)
-        -   [logEvent](#logevent)
-        -   [setScreenName](#setscreenname)
-        -   [setUserId](#setuserid)
-        -   [setUserProperty](#setuserproperty)
-        -   [initiateOnDeviceConversionMeasurement](#initiateondeviceconversionmeasurement)
-    -   [Crashlytics](#crashlytics)
-        -   [setCrashlyticsCollectionEnabled](#setcrashlyticscollectionenabled)
-        -   [didCrashOnPreviousExecution](#didcrashonpreviousexecution)
-        -   [isCrashlyticsCollectionEnabled](#iscrashlyticscollectionenabled)
-        -   [setCrashlyticsUserId](#setcrashlyticsuserid)
-        -   [sendCrash](#sendcrash)
-        -   [setCrashlyticsCustomKey](#setcrashlyticscustomkey)
-        -   [logMessage](#logmessage)
-        -   [logError](#logerror)
-    -   [Authentication](#authentication)
-        -   [isUserSignedIn](#isusersignedin)
-        -   [signOutUser](#signoutuser)
-        -   [getCurrentUser](#getcurrentuser)
-        -   [reloadCurrentUser](#reloadcurrentuser)
-        -   [updateUserProfile](#updateuserprofile)
-        -   [updateUserEmail](#updateuseremail)
-        -   [sendUserEmailVerification](#senduseremailverification)
-        -   [verifyBeforeUpdateEmail](#verifybeforeupdateemail)
-        -   [updateUserPassword](#updateuserpassword)
-        -   [sendUserPasswordResetEmail](#senduserpasswordresetemail)
-        -   [deleteUser](#deleteuser)
-        -   [createUserWithEmailAndPassword](#createuserwithemailandpassword)
-        -   [signInUserWithEmailAndPassword](#signinuserwithemailandpassword)
-        -   [signInUserWithCustomToken](#signinuserwithcustomtoken)
-        -   [signInUserAnonymously](#signinuseranonymously)
-        -   [verifyPhoneNumber](#verifyphonenumber)
-        -   [enrollSecondAuthFactor](#enrollsecondauthfactor)
-        -   [verifySecondAuthFactor](#verifysecondauthfactor)
-        -   [listEnrolledSecondAuthFactors](#listenrolledsecondauthfactors)
-        -   [unenrollSecondAuthFactor](#unenrollsecondauthfactor)
-        -   [setLanguageCode](#setlanguagecode)
-        -   [authenticateUserWithEmailAndPassword](#authenticateuserwithemailandpassword)
-        -   [authenticateUserWithGoogle](#authenticateuserwithgoogle)
-        -   [authenticateUserWithApple](#authenticateuserwithapple)
-        -   [authenticateUserWithMicrosoft](#authenticateuserwithmicrosoft)
-        -   [authenticateUserWithFacebook](#authenticateuserwithfacebook)
-        -   [authenticateUserWithOAuth](#authenticateuserwithoauth)
-        -   [signInWithCredential](#signinwithcredential)
-        -   [linkUserWithCredential](#linkuserwithcredential)
-        -   [reauthenticateWithCredential](#reauthenticatewithcredential)
-        -   [registerAuthStateChangeListener](#registerauthstatechangelistener)
-        -   [registerAuthIdTokenChangeListener](#registerauthidtokenchangelistener)
-        -   [useAuthEmulator](#useauthemulator)
-        -   [getClaims](#getclaims)
-    -   [Remote Config](#remote-config)
-        -   [fetch](#fetch)
-        -   [activateFetched](#activatefetched)
-        -   [fetchAndActivate](#fetchandactivate)
-        -   [resetRemoteConfig](#resetremoteconfig)
-        -   [getValue](#getvalue)
-        -   [getInfo](#getinfo)
-        -   [getAll](#getall)
-        -   [setConfigSettings](#setconfigsettings)
-        -   [setDefaults](#setdefaults)
-    -   [Performance](#performance)
-        -   [setPerformanceCollectionEnabled](#setperformancecollectionenabled)
-        -   [isPerformanceCollectionEnabled](#isperformancecollectionenabled)
-        -   [startTrace](#starttrace)
-        -   [incrementCounter](#incrementcounter)
-        -   [stopTrace](#stoptrace)
-    -   [Firestore](#firestore)
-        -   [addDocumentToFirestoreCollection](#adddocumenttofirestorecollection)
-        -   [setDocumentInFirestoreCollection](#setdocumentinfirestorecollection)
-        -   [updateDocumentInFirestoreCollection](#updatedocumentinfirestorecollection)
-        -   [deleteDocumentFromFirestoreCollection](#deletedocumentfromfirestorecollection)
-        -   [documentExistsInFirestoreCollection](#documentexistsinfirestorecollection)
-        -   [fetchDocumentInFirestoreCollection](#fetchdocumentinfirestorecollection)
-        -   [fetchFirestoreCollection](#fetchfirestorecollection)
-        -   [listenToDocumentInFirestoreCollection](#listentodocumentinfirestorecollection)
-        -   [listenToFirestoreCollection](#listentofirestorecollection)
-        -   [removeFirestoreListener](#removefirestorelistener)
-    -   [Functions](#functions)
-        -   [functionsHttpsCallable](#functionshttpscallable)
-    -   [Installations](#installations)
-        -   [getInstallationId](#getinstallationid)
-        -   [getInstallationToken](#getinstallationtoken)
-        -   [getInstallationId](#getinstallationid-1)
-        -   [registerInstallationIdChangeListener](#registerinstallationidchangelistener)
-    -   [Miscellaneous](#miscellaneous)
-        -   [registerApplicationDidBecomeActiveListener](#registerapplicationdidbecomeactivelistener)
-        -   [registerApplicationDidEnterBackgroundListener](#registerapplicationdidenterbackgroundlistener)
--   [Credits](#credits)
+- [Installation](#installation)
+  - [Plugin variables](#plugin-variables)
+    - [Android & iOS](#android--ios)
+    - [Android only](#android-only)
+    - [iOS only](#ios-only)
+    - [Post-install plugin variables](#post-install-plugin-variables)
+  - [Supported Cordova Versions](#supported-cordova-versions)
+  - [Supported Mobile Platform Versions](#supported-mobile-platform-versions)
+  - [Migrating from cordova-plugin-firebase](#migrating-from-cordova-plugin-firebase)
+    - [Breaking API changes](#breaking-api-changes)
+    - [Ionic 4+](#ionic-4)
+    - [Ionic 3](#ionic-3)
+- [Build environment notes](#build-environment-notes)
+  - [Remote Cloud Build](#remote-cloud-build)
+  - [Capacitor support](#capacitor-support)
+  - [Android-specific](#android-specific)
+    - [Specifying Android library versions](#specifying-android-library-versions)
+    - [AndroidX](#androidx)
+  - [Google Play Services and Firebase libraries](#google-play-services-and-firebase-libraries)
+  - [iOS-specific](#ios-specific)
+    - [Specifying iOS library versions](#specifying-ios-library-versions)
+    - [Cocoapods](#cocoapods)
+    - [Out-of-date pods](#out-of-date-pods)
+    - [Strip debug symbols](#strip-debug-symbols)
+    - [Cordova CLI builds](#cordova-cli-builds)
+- [Firebase config setup](#firebase-config-setup)
+- [Disable data collection on startup](#disable-data-collection-on-startup)
+- [Example project](#example-project)
+- [Reporting issues](#reporting-issues)
+  - [Reporting a bug or problem](#reporting-a-bug-or-problem)
+  - [Requesting a new feature](#requesting-a-new-feature)
+- [Cloud messaging](#cloud-messaging)
+  - [Background notifications](#background-notifications)
+  - [Foreground notifications](#foreground-notifications)
+  - [Android notifications](#android-notifications)
+    - [Android background notifications](#android-background-notifications)
+    - [Android foreground notifications](#android-foreground-notifications)
+    - [Android Notification Channels](#android-notification-channels)
+    - [Android Notification Icons](#android-notification-icons)
+    - [Android Notification Color](#android-notification-color)
+    - [Android Notification Sound](#android-notification-sound)
+    - [Android cloud message types](#android-cloud-message-types)
+  - [iOS notifications](#ios-notifications)
+    - [iOS background notifications](#ios-background-notifications)
+    - [iOS notification sound](#ios-notification-sound)
+    - [iOS critical notifications](#ios-critical-notifications)
+    - [iOS badge number](#ios-badge-number)
+    - [iOS actionable notifications](#ios-actionable-notifications)
+    - [iOS notification settings button](#ios-notification-settings-button)
+  - [Data messages](#data-messages)
+    - [Data message notifications](#data-message-notifications)
+  - [Custom FCM message handling](#custom-fcm-message-handling)
+    - [Android](#android)
+    - [iOS](#ios)
+    - [Example](#example)
+- [InApp Messaging](#inapp-messaging)
+- [Google Tag Manager](#google-tag-manager)
+  - [Android](#android-1)
+  - [iOS](#ios-1)
+- [Performance Monitoring](#performance-monitoring)
+  - [Android Performance Monitoring Gradle plugin](#android-performance-monitoring-gradle-plugin)
+- [API](#api)
+  - [Notifications and data messages](#notifications-and-data-messages)
+    - [getToken](#gettoken)
+    - [getId](#getid)
+    - [onTokenRefresh](#ontokenrefresh)
+    - [getAPNSToken](#getapnstoken)
+    - [onApnsTokenReceived](#onapnstokenreceived)
+    - [onOpenSettings](#onopensettings)
+    - [onMessageReceived](#onmessagereceived)
+    - [grantPermission](#grantpermission)
+    - [grantCriticalPermission](#grantcriticalpermission)
+    - [hasPermission](#haspermission)
+    - [hasCriticalPermission](#hascriticalpermission)
+    - [unregister](#unregister)
+    - [isAutoInitEnabled](#isautoinitenabled)
+    - [setAutoInitEnabled](#setautoinitenabled)
+    - [setBadgeNumber](#setbadgenumber)
+    - [getBadgeNumber](#getbadgenumber)
+    - [clearAllNotifications](#clearallnotifications)
+    - [subscribe](#subscribe)
+    - [unsubscribe](#unsubscribe)
+    - [createChannel](#createchannel)
+    - [setDefaultChannel](#setdefaultchannel)
+    - [Default Android Channel Properties](#default-android-channel-properties)
+    - [deleteChannel](#deletechannel)
+    - [listChannels](#listchannels)
+  - [Analytics](#analytics)
+    - [setAnalyticsCollectionEnabled](#setanalyticscollectionenabled)
+    - [isAnalyticsCollectionEnabled](#isanalyticscollectionenabled)
+    - [AnalyticsConsentMode](#analyticsconsentmode)
+    - [AnalyticsConsentStatus](#analyticsconsentstatus)
+    - [setAnalyticsConsentMode](#setanalyticsconsentmode)
+    - [logEvent](#logevent)
+    - [setScreenName](#setscreenname)
+    - [setUserId](#setuserid)
+    - [setUserProperty](#setuserproperty)
+    - [initiateOnDeviceConversionMeasurement](#initiateondeviceconversionmeasurement)
+  - [Crashlytics](#crashlytics)
+    - [setCrashlyticsCollectionEnabled](#setcrashlyticscollectionenabled)
+    - [didCrashOnPreviousExecution](#didcrashonpreviousexecution)
+    - [isCrashlyticsCollectionEnabled](#iscrashlyticscollectionenabled)
+    - [setCrashlyticsUserId](#setcrashlyticsuserid)
+    - [sendCrash](#sendcrash)
+    - [setCrashlyticsCustomKey](#setcrashlyticscustomkey)
+    - [logMessage](#logmessage)
+    - [logError](#logerror)
+  - [Authentication](#authentication)
+    - [isUserSignedIn](#isusersignedin)
+    - [signOutUser](#signoutuser)
+    - [getCurrentUser](#getcurrentuser)
+    - [reloadCurrentUser](#reloadcurrentuser)
+    - [updateUserProfile](#updateuserprofile)
+    - [updateUserEmail](#updateuseremail)
+    - [sendUserEmailVerification](#senduseremailverification)
+    - [verifyBeforeUpdateEmail](#verifybeforeupdateemail)
+    - [updateUserPassword](#updateuserpassword)
+    - [sendUserPasswordResetEmail](#senduserpasswordresetemail)
+    - [deleteUser](#deleteuser)
+    - [createUserWithEmailAndPassword](#createuserwithemailandpassword)
+    - [signInUserWithEmailAndPassword](#signinuserwithemailandpassword)
+    - [signInUserWithCustomToken](#signinuserwithcustomtoken)
+    - [signInUserAnonymously](#signinuseranonymously)
+    - [verifyPhoneNumber](#verifyphonenumber)
+    - [enrollSecondAuthFactor](#enrollsecondauthfactor)
+    - [verifySecondAuthFactor](#verifysecondauthfactor)
+    - [listEnrolledSecondAuthFactors](#listenrolledsecondauthfactors)
+    - [unenrollSecondAuthFactor](#unenrollsecondauthfactor)
+    - [setLanguageCode](#setlanguagecode)
+    - [authenticateUserWithEmailAndPassword](#authenticateuserwithemailandpassword)
+    - [authenticateUserWithGoogle](#authenticateuserwithgoogle)
+    - [authenticateUserWithApple](#authenticateuserwithapple)
+    - [authenticateUserWithMicrosoft](#authenticateuserwithmicrosoft)
+    - [authenticateUserWithFacebook](#authenticateuserwithfacebook)
+    - [authenticateUserWithOAuth](#authenticateuserwithoauth)
+    - [signInWithCredential](#signinwithcredential)
+    - [linkUserWithCredential](#linkuserwithcredential)
+    - [reauthenticateWithCredential](#reauthenticatewithcredential)
+    - [registerAuthStateChangeListener](#registerauthstatechangelistener)
+    - [registerAuthIdTokenChangeListener](#registerauthidtokenchangelistener)
+    - [useAuthEmulator](#useauthemulator)
+    - [getClaims](#getclaims)
+  - [Remote Config](#remote-config)
+    - [fetch](#fetch)
+    - [activateFetched](#activatefetched)
+    - [fetchAndActivate](#fetchandactivate)
+    - [resetRemoteConfig](#resetremoteconfig)
+    - [getValue](#getvalue)
+    - [getInfo](#getinfo)
+    - [getAll](#getall)
+    - [setConfigSettings](#setconfigsettings)
+    - [setDefaults](#setdefaults)
+  - [Performance](#performance)
+    - [setPerformanceCollectionEnabled](#setperformancecollectionenabled)
+    - [isPerformanceCollectionEnabled](#isperformancecollectionenabled)
+    - [startTrace](#starttrace)
+    - [incrementCounter](#incrementcounter)
+    - [stopTrace](#stoptrace)
+  - [Firestore](#firestore)
+    - [addDocumentToFirestoreCollection](#adddocumenttofirestorecollection)
+    - [setDocumentInFirestoreCollection](#setdocumentinfirestorecollection)
+    - [updateDocumentInFirestoreCollection](#updatedocumentinfirestorecollection)
+    - [deleteDocumentFromFirestoreCollection](#deletedocumentfromfirestorecollection)
+    - [documentExistsInFirestoreCollection](#documentexistsinfirestorecollection)
+    - [fetchDocumentInFirestoreCollection](#fetchdocumentinfirestorecollection)
+    - [fetchFirestoreCollection](#fetchfirestorecollection)
+    - [listenToDocumentInFirestoreCollection](#listentodocumentinfirestorecollection)
+    - [listenToFirestoreCollection](#listentofirestorecollection)
+    - [removeFirestoreListener](#removefirestorelistener)
+  - [Functions](#functions)
+    - [functionsHttpsCallable](#functionshttpscallable)
+  - [Installations](#installations)
+    - [getInstallationId](#getinstallationid)
+    - [getInstallationToken](#getinstallationtoken)
+    - [getInstallationId](#getinstallationid-1)
+    - [registerInstallationIdChangeListener](#registerinstallationidchangelistener)
+  - [Miscellaneous](#miscellaneous)
+    - [registerApplicationDidBecomeActiveListener](#registerapplicationdidbecomeactivelistener)
+    - [registerApplicationDidEnterBackgroundListener](#registerapplicationdidenterbackgroundlistener)
+    - [Debug mode](#debug-mode)
+- [Credits](#credits)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -2412,6 +2413,17 @@ FirebasePlugin.isAnalyticsCollectionEnabled(
     }
 );
 ```
+### AnalyticsConsentMode
+Constants defining the mode of consent to set:
+- {string} `AnalyticsConsentMode.ANALYTICS_STORAGE` - consent for analytics data storage
+- {string} `AnalyticsConsentMode.AD_STORAGE` - consent for ad storage
+- {string} `AnalyticsConsentMode.AD_USER_DATA` - consent for ad user data
+- {string} `AnalyticsConsentMode.AD_PERSONALIZATION` `- consent for ad personalization
+
+### AnalyticsConsentStatus
+Constants defining the status of consent to set:
+- {string} `AnalyticsConsentStatus.GRANTED` - consent granted
+- {string} `AnalyticsConsentStatus.DENIED` - consent denied
 
 ### setAnalyticsConsentMode
 
@@ -2420,14 +2432,19 @@ Sets the user's consent mode status for various types of data collection in the 
 
 **Parameters**:
 
--   {object} consent - dictionary of the consent modes and their status
+-   {object} consent - map of the consent modes as `AnalyticsConsentMode` and their status as `AnalyticsConsentStatus`
 
 ```javascript
-FirebasePlugin.setAnalyticsConsentMode({
-    ANALYTICS_STORAGE: "GRANTED",
-    AD_STORAGE: "GRANTED",
-    AD_USER_DATA: "GRANTED",
-    AD_PERSONALIZATION: "GRANTED",
+var consents = {};
+consents[FirebasePlugin.AnalyticsConsentMode.ANALYTICS_STORAGE] = FirebasePlugin.AnalyticsConsentStatus.GRANTED;
+consents[FirebasePlugin.AnalyticsConsentMode.AD_STORAGE] = FirebasePlugin.AnalyticsConsentStatus.GRANTED;
+consents[FirebasePlugin.AnalyticsConsentMode.AD_USER_DATA] = FirebasePlugin.AnalyticsConsentStatus.GRANTED;
+consents[FirebasePlugin.AnalyticsConsentMode.AD_PERSONALIZATION] = FirebasePlugin.AnalyticsConsentStatus.DENIED;
+
+FirebasePlugin.setAnalyticsConsentMode(consents, function() {
+    console.log("Consent mode set");
+}, function(error) {
+    console.error("Error setting consent mode: " + error);
 });
 ```
 
@@ -2488,23 +2505,7 @@ Set a user property for use in Analytics:
 ```javascript
 FirebasePlugin.setUserProperty("name", "value");
 ```
-### Enable debug_mode to use DebugView
-You can find detailed information [here](https://firebase.google.com/docs/analytics/debugview?hl=es-419#android)
-#### Android
-1) Connect your developer Android device via USB.
-2) Allow the connection on the device.
-3) Open your terminal and run 
-`adb devices -l`
-4) If your device appears run
-`adb shell setprop debug.firebase.analytics.app PACKAGE.NAME`
 
-Now your device is in debug Mode.
-
-Disable it using
-`adb shell setprop debug.firebase.analytics.app .none.`
-
-#### IOS
-Find information [here](https://firebase.google.com/docs/analytics/debugview?hl=es-419#android) 
 
 ### initiateOnDeviceConversionMeasurement
 
@@ -5161,6 +5162,25 @@ FirebasePlugin.registerApplicationDidEnterBackgroundListener(function () {
     console.log("Application send to background");
 });
 ```
+
+### Debug mode
+Enable debug mode to use DebugView.
+You can find detailed information [here](https://firebase.google.com/docs/analytics/debugview?hl=es-419#android)
+#### Android
+1) Connect your developer Android device via USB.
+2) Allow the connection on the device.
+3) Open your terminal and run
+   `adb devices -l`
+4) If your device appears run
+   `adb shell setprop debug.firebase.analytics.app PACKAGE.NAME`
+
+Now your device is in debug Mode.
+
+Disable it using
+`adb shell setprop debug.firebase.analytics.app .none.`
+
+#### IOS
+Find information [here](https://firebase.google.com/docs/analytics/debugview?hl=es-419#android)
 
 # Credits
 

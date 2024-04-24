@@ -119,6 +119,16 @@ export interface FirebasePlugin {
     setAnalyticsCollectionEnabled(
         setEnabled: boolean
     ): void
+    AnalyticsConsentMode: {
+        ANALYTICS_STORAGE: string,
+        AD_STORAGE: string,
+        AD_USER_DATA: string,
+        AD_PERSONALIZATION: string
+    }
+    AnalyticsConsentStatus: {
+        GRANTED: string,
+        DENIED: string
+    }
     setAnalyticsConsentMode(
         consent: object,
         success: (info: object) => void,

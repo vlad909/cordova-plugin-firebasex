@@ -158,6 +158,18 @@ exports.isAnalyticsCollectionEnabled = function (success, error) {
     exec(success, error, "FirebasePlugin", "isAnalyticsCollectionEnabled", []);
 };
 
+exports.AnalyticsConsentMode = {
+    ANALYTICS_STORAGE: "ANALYTICS_STORAGE",
+    AD_STORAGE: "AD_STORAGE",
+    AD_USER_DATA: "AD_USER_DATA",
+    AD_PERSONALIZATION: "AD_PERSONALIZATION"
+};
+
+exports.AnalyticsConsentStatus = {
+    GRANTED: "GRANTED",
+    DENIED: "DENIED"
+};
+
 exports.setAnalyticsConsentMode = function(consent, success, error) {
     exec(success, error, "FirebasePlugin", "setAnalyticsConsentMode", [consent]);
 };
