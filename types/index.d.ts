@@ -302,6 +302,11 @@ export interface FirebasePlugin {
         success?: () => void,
         error?: (err: string) => void
     ): void
+    unlinkUserWithProvider(
+        providerId: string,
+        success?: () => void,
+        error?: (err: string) => void
+    ): void
     isUserSignedIn(
         success: (isSignedIn: boolean) => void,
         error?: (err: string) => void

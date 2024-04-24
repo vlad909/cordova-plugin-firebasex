@@ -409,6 +409,11 @@ exports.reauthenticateWithCredential = function (credential, success, error) {
     exec(success, handleAuthErrorResult(error), "FirebasePlugin", "reauthenticateWithCredential", [credential]);
 };
 
+exports.unlinkUserWithProvider = function (providerId, success, error) {
+    if(typeof providerId !== 'string') return error("'providerId' must be a string");
+    exec(success, handleAuthErrorResult(error), "FirebasePlugin", "unlinkUserWithProvider", [providerId]);
+};
+
 exports.isUserSignedIn = function (success, error) {
     exec(ensureBooleanFn(success), error, "FirebasePlugin", "isUserSignedIn", []);
 };

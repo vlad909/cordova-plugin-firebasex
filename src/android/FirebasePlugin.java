@@ -218,7 +218,7 @@ public class FirebasePlugin extends CordovaPlugin {
                     if (getMetaDataFromManifest(GOOGLE_ANALYTICS_ADID_COLLECTION_ENABLED)) {
                         setPreference(GOOGLE_ANALYTICS_ADID_COLLECTION_ENABLED, true);
                     }
-                    
+
                     if (getMetaDataFromManifest(GOOGLE_ANALYTICS_DEFAULT_ALLOW_ANALYTICS_STORAGE)) {
                         setPreference(GOOGLE_ANALYTICS_DEFAULT_ALLOW_ANALYTICS_STORAGE, true);
                     }
@@ -420,6 +420,9 @@ public class FirebasePlugin extends CordovaPlugin {
                     break;
                 case "linkUserWithCredential":
                     this.linkUserWithCredential(callbackContext, args);
+                    break;
+                case "unlinkUserWithProvider":
+                    this.unlinkUserWithProvider(callbackContext, args);
                     break;
                 case "reauthenticateWithCredential":
                     this.reauthenticateWithCredential(callbackContext, args);
@@ -1675,6 +1678,25 @@ public class FirebasePlugin extends CordovaPlugin {
                     //ELSE
                     callbackContext.error("Specified native auth credential id does not exist");
 
+                } catch (Exception e) {
+                    handleExceptionWithContext(e, callbackContext);
+                }
+            }
+        });
+    }
+
+    public void unlinkUserWithProvider(final CallbackContext callbackContext, final JSONArray args){
+        cordova.getThreadPool().execute(new Runnable() {
+            public void run() {
+                try {
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    if(user == null){
+                        callbackContext.error("No user is currently signed in");
+                        return;
+                    }
+
+                    String providerId = args.getString(0);
+                    user.unlink(providerId).addOnCompleteListener(cordova.getActivity(), new AuthResultOnCompleteListener(callbackContext));
                 } catch (Exception e) {
                     handleExceptionWithContext(e, callbackContext);
                 }

@@ -115,7 +115,7 @@ static FIROAuthProvider* oauthProvider;
             [self setPreferenceFlag:GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_PERSONALIZATION_SIGNALS flag:YES];
         }
 
-        
+
         // We don't need `setPreferenceFlag` here as we don't allow to change this at runtime.
         _isFCMEnabled = [self getGooglePlistFlagWithDefaultValue:FIREBASEX_IOS_FCM_ENABLED defaultValue:YES];
         if (!self.isFCMEnabled) {
@@ -197,7 +197,7 @@ static FIROAuthProvider* oauthProvider;
 
         // Initialize categories
         [[UNUserNotificationCenter currentNotificationCenter] setNotificationCategories:categories];
-        
+
     }@catch (NSException *exception) {
         [self handlePluginExceptionWithoutContext:exception];
     }
@@ -460,7 +460,7 @@ static FIROAuthProvider* oauthProvider;
 
 - (void)registerForRemoteNotifications {
     NSLog(@"registerForRemoteNotifications");
-    
+
     if(registeredForRemoteNotifications) return;
 
     [self runOnMainThread:^{
@@ -1083,12 +1083,12 @@ static FIROAuthProvider* oauthProvider;
         NSString* providerId = @"microsoft.com";
         NSMutableDictionary* customParameters = [[NSMutableDictionary alloc] init];
         [customParameters setValue:@"consent" forKey:@"prompt"];
-        
+
         NSString* locale = [command.arguments objectAtIndex:0];
         if(locale != nil){
             [customParameters setValue:locale forKey:@"locale"];
         }
-        
+
         [self authenticateWithOAuth:command providerId:providerId customParameters:customParameters scopes:nil];
     }@catch (NSException *exception) {
         [self handlePluginExceptionWithContext:exception :command];
@@ -1100,7 +1100,7 @@ static FIROAuthProvider* oauthProvider;
         NSString* providerId = [command.arguments objectAtIndex:0];
         NSDictionary* customParameters = [command.arguments objectAtIndex:1];
         NSArray* scopes = [command.arguments objectAtIndex:2];
-        
+
         [self authenticateWithOAuth:command providerId:providerId customParameters:customParameters scopes:scopes];
     }@catch (NSException *exception) {
         [self handlePluginExceptionWithContext:exception :command];
@@ -1109,22 +1109,22 @@ static FIROAuthProvider* oauthProvider;
 
 -(void)authenticateWithOAuth:(CDVInvokedUrlCommand*)command providerId:(NSString*)providerId customParameters:(NSDictionary*)customParameters scopes:(NSArray*)scopes {
     oauthProvider = [FIROAuthProvider providerWithProviderID:providerId];
-    
+
     if(customParameters != nil){
         for(id key in customParameters){
             id value = [customParameters objectForKey:key];
             [oauthProvider setCustomParameters:@{key: value}];
         }
     }
-    
+
     if(scopes != nil){
         [oauthProvider setScopes:scopes];
     }
-    
-  
+
+
     [oauthProvider getCredentialWithUIDelegate:nil
                         completion:^(FIRAuthCredential *_Nullable credential, NSError *_Nullable error) {
-        
+
         CDVPluginResult* pluginResult;
         if (error) {
             pluginResult = [self createAuthErrorResult:error];
@@ -1196,6 +1196,22 @@ static FIROAuthProvider* oauthProvider;
             [self handleAuthResult:authResult error:error command:command];
         }];
 
+    }@catch (NSException *exception) {
+        [self handlePluginExceptionWithContext:exception :command];
+    }
+}
+
+- (void)unlinkUserWithProvider:(CDVInvokedUrlCommand*)command {
+    @try {
+        if([self userNotSignedInError:command]) return;
+        FIRUser* user = [FIRAuth auth].currentUser;
+
+        NSString* providerId = [command.arguments objectAtIndex:0];
+
+        [user unlinkFromProvider:providerId
+                                            completion:^(FIRUser *_Nullable user, NSError *_Nullable error) {
+            [self handleEmptyResultWithPotentialError:error command:command];
+        }];
     }@catch (NSException *exception) {
         [self handlePluginExceptionWithContext:exception :command];
     }
@@ -1715,7 +1731,7 @@ static FIROAuthProvider* oauthProvider;
             }else if([userIdentifier objectForKey:@"phoneNumber"] != nil){
                 [FIRAnalytics initiateOnDeviceConversionMeasurementWithPhoneNumber:[userIdentifier objectForKey:@"phoneNumber"]];
             }
-            
+
             [self sendPluginSuccess:command];
         }@catch (NSException *exception) {
             [self handlePluginExceptionWithContext:exception :command];
@@ -2901,7 +2917,7 @@ static FIROAuthProvider* oauthProvider;
          }else{
              pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:true];
          }
-        
+
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
      }@catch (NSException *exception) {
          [self handlePluginExceptionWithContext:exception :command];

@@ -158,6 +158,7 @@ To help ensure this plugin is kept updated, new features are added and bugfixes 
     - [signInWithCredential](#signinwithcredential)
     - [linkUserWithCredential](#linkuserwithcredential)
     - [reauthenticateWithCredential](#reauthenticatewithcredential)
+    - [unlinkUserWithProvider](#unlinkuserwithprovider)
     - [registerAuthStateChangeListener](#registerauthstatechangelistener)
     - [registerAuthIdTokenChangeListener](#registerauthidtokenchangelistener)
     - [useAuthEmulator](#useauthemulator)
@@ -3992,6 +3993,32 @@ FirebasePlugin.reauthenticateWithCredential(
         } else {
             console.error("Failed to reauthenticate", error);
         }
+    }
+);
+```
+
+### unlinkUserWithProvider
+
+Unlinks an existing Firebase user account with the specified provider ID.
+See the [Android-](https://firebase.google.com/docs/auth/android/account-linking#unlink-an-auth-provider-from-a-user-account) and [iOS](https://firebase.google.com/docs/auth/ios/account-linking#unlink-an-auth-provider-from-a-user-account)-specific Firebase documentation for more info.
+
+**Parameters**:
+
+-   {string} providerId - ID of provider to unlink from user account
+-   {function} success - callback function to call on successful unlinking of provider
+-   {function} error - callback function which will be passed a {string} error message as an argument
+
+Example usage:
+
+```javascript
+var providerId = "microsoft.com";
+FirebasePlugin.unlinkUserWithProvider(
+    providerId,
+    function () {
+        console.log("Successfully unlinked");
+    },
+    function (error) {
+        console.error("Failed to unlink", error);
     }
 );
 ```

@@ -23,6 +23,7 @@
 - (void)authenticateUserWithOAuth:(CDVInvokedUrlCommand*)command;
 - (void)signInWithCredential:(CDVInvokedUrlCommand*)command;
 - (void)linkUserWithCredential:(CDVInvokedUrlCommand*)command;
+- (void)unlinkUserWithProvider:(CDVInvokedUrlCommand*)command;
 - (void)reauthenticateWithCredential:(CDVInvokedUrlCommand*)command;
 - (void)isUserSignedIn:(CDVInvokedUrlCommand*)command;
 - (void)signOutUser:(CDVInvokedUrlCommand*)command;
