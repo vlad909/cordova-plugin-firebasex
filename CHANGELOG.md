@@ -1,3 +1,17 @@
+# Version 16.5.0
+* (Android) update: Pin latest Firebase SDK component versions as of [11 Apr 2024](https://firebase.google.com/support/release-notes/android#2024-04-11)
+* (iOS) update: Pin latest Firebase SDK components v10.24.0 as of [9 Apr 2024](https://firebase.google.com/support/release-notes/ios#version_10240_-_april_9_2024)
+* feat: Add unlinkUserWithProvider()
+    * Based on PR [#821](https://github.com/dpa99c/cordova-plugin-firebasex/pull/821)
+* (android) fix: support minSDK 24+ - remove trailing comma
+    * Merged from PR [#860](https://github.com/dpa99c/cordova-plugin-firebasex/pull/860)
+* doc: Add information to enable the Analytics debug_mode
+    * Merged from PR [#820](https://github.com/dpa99c/cordova-plugin-firebasex/pull/820)
+* Add Consent Mode v2
+    * Merged from PR [#878](https://github.com/dpa99c/cordova-plugin-firebasex/pull/878)
+* (ios) docs: Update IOS_NOTIFICATION_SERVICE.md
+    * Merged from PR [#814](https://github.com/dpa99c/cordova-plugin-firebasex/pull/814)
+
 # Version 16.4.0
 * (doc) Add note about xmlns:android attribute for config.xml
   Merged from PR [#840](https://github.com/dpa99c/cordova-plugin-firebasex/pull/840)
