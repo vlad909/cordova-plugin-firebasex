@@ -166,7 +166,7 @@
 				<source url="https://cdn.cocoapods.org/"/>
 			</config>
 			<pods use-frameworks="true">
-				<pod name="FirebaseCore" spec="10.24.0"/>
+				<pod name="FirebaseCore" spec="10.24.0" modular_headers="true"/>
 				<pod name="FirebaseAuth" spec="10.24.0"/>
 				<pod name="FirebaseAnalytics" spec="10.24.0"/>
 				<!--<pod name="FirebaseAnalyticsOnDeviceConversion" spec="10.24.0"/>-->
